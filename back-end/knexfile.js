@@ -7,11 +7,19 @@
 require('dotenv').config();
 const path = require("path");
 
+// const {
+//   DATABASE_URL = "postgresql://postgres@localhost/postgres",
+//   DATABASE_URL_DEVELOPMENT = "postgresql://postgres@localhost/postgres",
+//   DATABASE_URL_TEST = "postgresql://postgres@localhost/postgres",
+//   DATABASE_URL_PREVIEW = "postgresql://postgres@localhost/postgres",
+//   DEBUG,
+// } = process.env;
+
 const {
-  DATABASE_URL = "postgresql://postgres@localhost/postgres",
-  DATABASE_URL_DEVELOPMENT = "postgresql://postgres@localhost/postgres",
-  DATABASE_URL_TEST = "postgresql://postgres@localhost/postgres",
-  DATABASE_URL_PREVIEW = "postgresql://postgres@localhost/postgres",
+  DATABASE_URL="postgres://eldmkgzd:JoE09b6CSUGmqm4TK_p-frazT7oDGSh5@batyr.db.elephantsql.com/eldmkgzd",
+  DATABASE_URL_DEVELOPMENT="postgres://eldmkgzd:JoE09b6CSUGmqm4TK_p-frazT7oDGSh5@batyr.db.elephantsql.com/eldmkgzd",
+  DATABASE_URL_TEST="postgres://eldmkgzd:JoE09b6CSUGmqm4TK_p-frazT7oDGSh5@batyr.db.elephantsql.com/eldmkgzd",
+  DATABASE_URL_PREVIEW="postgres://eldmkgzd:JoE09b6CSUGmqm4TK_p-frazT7oDGSh5@batyr.db.elephantsql.com/eldmkgzd",
   DEBUG,
 } = process.env;
 
