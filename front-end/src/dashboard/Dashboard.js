@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
+import {
+  cancelReservation,
+  finishTable,
+  listReservations,
+  listTables,
+} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import { next, previous, today } from "../utils/date-time";
+import TablesList from "./TablesList";
+import ReservationsList from "./ReservationsList";
+import DateButtons from "./DateButtons";
 
 /**
  * Defines the dashboard page.
@@ -27,10 +36,15 @@ function Dashboard({ date }) {
     <main>
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
+        <h4 className="mb-0">Reservations for {date}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
       {JSON.stringify(reservations)}
+      <DateButtons 
+        previous={`/dashboard?date=${previous(date)}`}
+        today={`/dashboard?date=${today()}`}
+        next={`/dashboard?date=${next(date)}`}
+      />
     </main>
   );
 }
