@@ -69,8 +69,14 @@ async function read(req, res) {
 
 async function update(req, res) {}
 
-async function status(req, res) {}
-async function statusIsNotFinished(req, res, next) {}
+async function status(req, res) {
+  res.locals.reservation.status = req.body.data.status;
+  const data = await service.status(res.locals.reservation);
+  res.json({ data });
+}
+async function statusIsNotFinished(req, res, next) {
+  
+}
 async function statusIsBooked(req, res, next) {}
 
 
@@ -80,4 +86,6 @@ module.exports = {
   list: asyncErrorBoundary(list),
   read: [hasReservationId, asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   reservationExists: [hasReservationId, asyncErrorBoundary(reservationExists)],
+  status: [hasReservationId, asyncErrorBoundary(reservationExists), statusIsNotFinished, asyncErrorBoundary(status)],
+  update: [hasReservationId, asyncErrorBoundary(reservationExists), statusIsBooked, asyncErrorBoundary(update)],
 };

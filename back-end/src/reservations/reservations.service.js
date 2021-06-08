@@ -132,13 +132,39 @@ function read(reservation_id) {
     return knex(tableName).where({ reservation_id }).first()
 }
 
-function search(mobile_number) {}
+function search(mobile_number) {
+    return knex(tableName)
+        .whereRaw(
+            "translate(mobile_number, '() -', '') like ?",
+            `%${mobile_number.replace(/\D/g, "")}%`
+        )
+        .orderBy("reservation_date");
+}
 
-function update(reservation) {}
+function update(reservation) {
+    return knex(tableName)
+        .where({ reservation_id: reservation.reservation_id })
+        .update(reservation, "*")
+        .then((record) => records[0]);
+}
+
+const validReservationComps = (
+    isWithinEligibleTimeframe,
+    isWorkingDay,
+    isFutureDate,
+    peopleIsGreaterThanZero,
+    hasReservationTime,
+    hasReservationDate,
+    hasProperty("mobile_number"),
+    hasProperty("last_name"),
+    hasProperty("first_name")
+)
 
 module.exports = {
-    create,
+    create: [create, hasOptionalBookedStatus, validReservationComps],
     list,
     read,
+    search,
+    status: [update, hasValidStatus],
+    update: [update, hasOptionalBookedStatus, validReservationComps]
 };
-
