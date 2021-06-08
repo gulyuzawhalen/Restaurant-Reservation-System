@@ -4,6 +4,33 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
+async function hasReservationId(req, res, next) {
+  const reservation_id = req.params.reservation_id || req.body?.data?.reservation_id;
+  if (reservation_id) {
+    res.locals.reservation_id = reservation_id;
+    next();
+  } else {
+    next({
+      status: 400,
+      message: `reservation_id is required`
+    })
+  }
+}
+
+async function reservationExists(req, res, next) {
+  const reservation_id = res.locals.reservation_id;
+  const reservation = await service.read(reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    next();
+  } else {
+    next({
+      status: 404,
+      message: `Reservation id does not exist: ${reservation_id}`,
+    })
+  }
+}
+
 async function create(req, res) {
   // const newReservation = ({
   //   reservation_id,
@@ -40,8 +67,17 @@ async function read(req, res) {
   });
 }
 
+async function update(req, res) {}
+
+async function status(req, res) {}
+async function statusIsNotFinished(req, res, next) {}
+async function statusIsBooked(req, res, next) {}
+
+
+
 module.exports = {
   create: asyncErrorBoundary(create),
   list: asyncErrorBoundary(list),
-  read: asyncErrorBoundary(read),
+  read: [hasReservationId, asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
+  reservationExists: [hasReservationId, asyncErrorBoundary(reservationExists)],
 };
