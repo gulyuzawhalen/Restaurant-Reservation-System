@@ -1,5 +1,5 @@
 const knex = require("../db/connection");
-const hasProperties = require("../errors/hasProperties")
+const hasProperty = require("../errors/hasProperties")
 const tableName = "reservations";
 
 const validDate = /\d\d\d\d-\d\d-\d\d/;
@@ -149,7 +149,7 @@ function update(reservation) {
 }
 
 const validReservationComps = (
-    isWithinEligibleTimeframe,
+    isWithEligibleTimeframe,
     isWorkingDay,
     isFutureDate,
     peopleIsGreaterThanZero,
