@@ -32,22 +32,22 @@
  }
  
  async function create(req, res) {
-   // const newReservation = ({
-   //   reservation_id,
-   //   first_name,
-   //   last_name,
-   //   mobile_number,
-   //   reservation_date,
-   //   reservation_time,
-   //   people,
-   //   created_at,
-   //   updated_at,
-   // } = req.body.data);
-   // const createdReservation = await service.create(newReservation);
-   //res.status(201).json({ data: createdReservation });
+   const newReservation = ({
+     reservation_id,
+     first_name,
+     last_name,
+     mobile_number,
+     reservation_date,
+     reservation_time,
+     people,
+     created_at,
+     updated_at,
+   } = req.body.data);
+   const createdReservation = await service.create(newReservation);
+   res.status(201).json({ data: createdReservation });
    
-   const data = await service.create(req.body.data);
-   res.status(201).json({ data: data, })
+  //  const data = await service.create(req.body.data);
+  //  res.status(201).json({ data })
  }
  
  async function list(req, res) {
@@ -67,7 +67,12 @@
    });
  }
  
- async function update(req, res) {}
+ async function update(req, res) {
+  const { reservation_id } = res.locals.reservation;
+  req.body.data.reservation_id = reservation_id;
+  const data = await service.update(req.body.data);
+  res.json({ data });
+ }
  
  async function status(req, res) {
    res.locals.reservation.status = req.body.data.status;

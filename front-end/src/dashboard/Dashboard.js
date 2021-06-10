@@ -20,6 +20,8 @@ import DateButtons from "./DateButtons";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const [tables, setTables] = useState([]);
+  const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [date]);
 
@@ -29,22 +31,48 @@ function Dashboard({ date }) {
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+
+    listTables(abortController.signal).then(setTables).catch(setTablesError);
+
     return () => abortController.abort();
+  }
+
+  function onCancel(reservation_id) {
+    const abortController = new AbortController();
+    cancelReservation(reservation_id, abortController.signal)
+      .then(loadDashboard)
+      .catch(setReservationsError);
+
+    return () => abortController.abort();
+  }
+
+  function onFinish(table_id, reservation_id) {
+    finishTable(table_id, reservation_id)
+      .then(loadDashboard)
+      .catch(setTablesError);
   }
 
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for {date}</h4>
+      <div className="row">
+        <div className="col-md-6 col-lg-6 col-sm-12">
+          <div className="d-md-flex mb-3">
+            <h4 className="box-title mb-0">Reservations for {date}</h4>
+          </div>
+          <ErrorAlert error={reservationsError} />
+          <DateButtons
+            previous={`/dashboard?date=${previous(date)}`}
+            today={`/dashboard?date=${today()}`}
+            next={`/dashboard?date=${next(date)}`}
+          />
+          <ReservationsList onCancel={onCancel} reservations={reservations} />
+        </div>
+        <div className="col-md-6 col-lg-6 col-sm-12">
+          <ErrorAlert error={tablesError} />
+          <TablesList onFinish={onFinish} tables={tables} />
+        </div>
       </div>
-      <ErrorAlert error={reservationsError} />
-      {JSON.stringify(reservations)}
-      <DateButtons 
-        previous={`/dashboard?date=${previous(date)}`}
-        today={`/dashboard?date=${today()}`}
-        next={`/dashboard?date=${next(date)}`}
-      />
     </main>
   );
 }

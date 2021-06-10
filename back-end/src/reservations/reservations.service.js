@@ -1,5 +1,5 @@
 const knex = require("../db/connection");
-const hasProperty = require("../errors/hasProperties")
+const hasProperties = require("../errors/hasProperties")
 const tableName = "reservations";
 
 const validDate = /\d\d\d\d-\d\d-\d\d/;
@@ -155,10 +155,10 @@ const validReservationComps = (
     peopleIsGreaterThanZero,
     hasReservationTime,
     hasReservationDate,
-    hasProperty("mobile_number"),
-    hasProperty("last_name"),
-    hasProperty("first_name")
-)
+    hasProperties("mobile_number"),
+    hasProperties("last_name"),
+    hasProperties("first_name")
+);
 
 module.exports = {
     create: [create, hasOptionalBookedStatus, validReservationComps],
