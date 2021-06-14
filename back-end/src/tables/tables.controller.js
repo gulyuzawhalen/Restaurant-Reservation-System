@@ -8,11 +8,11 @@ async function tableExists(req, res, next) {
     res.locals.table = table;
     next();
   } else {
-    next({ status: 404, message: `Table id does not exist: ${table_id}` });
+    next({ status: 400, message: `Table id does not exist: ${table_id}` });
   }
 }
 
-function tableIsAvailable(req, res, next) {
+function tableIsAvailable(res, next) {
   if (res.locals.table.reservation_id) {
     next({
       status: 400,
