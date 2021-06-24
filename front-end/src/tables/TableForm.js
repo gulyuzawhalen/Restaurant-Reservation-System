@@ -1,83 +1,65 @@
-import React, { useState } from "react";
+import React from "react"
+import {useState} from "react"
+import { useHistory } from "react-router-dom";
+import { createTable } from "../utils/api";
+import TableErrors from "./TableError";
+import { today } from "../utils/date-time";
 
-function TableForm({
-  onSubmit,
-  onCancel,
-  initialState = {
-    table_name: "",
-    capacity: "",
-  },
-}) {
-  const [table, setTable] = useState(initialState);
+function TableForm(){
+    const history = useHistory();
+    const initialState = {
+        "table_name": "",
+        "capacity": 0
+    }
 
-  function changeHandler({ target: { name, value } }) {
-    setTable((previousTable) => ({
-      ...previousTable,
-      [name]: value,
-    }));
-  }
+    const [table, setTable] = useState(initialState);
+    function changeHandler({ target: { name, value } }) {
+      setTable((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
 
-  function numberChangeHandler({ target: { name, value } }) {
-    setTable((previousTable) => ({
-      ...previousTable,
-      [name]: Number(value),
-    }));
-  }
+    function changeHandlerNum({ target: { name, value } }) {
+      setTable((prevState) => ({
+        ...prevState,
+        [name]: Number(value),
+      }));
+    }
 
-  function submitHandler(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    onSubmit(table);
-  }
+    const [error, setError] = useState(null);
 
-  return (
-    <>
-      <form onSubmit={submitHandler}>
-        <fieldset>
-          <div className="row">
-            <div className="form-group col">
-              <label htmlFor="table_name">Table Name</label>
-              <input
-                type="text"
-                id="table_name"
-                name="table_name"
-                className="form-control"
-                value={table.table_name}
-                minLength="2"
-                required={true}
-                placeholder="Table Name"
-                onChange={changeHandler}
-              />
+    function submitHandler(event){
+        event.preventDefault();
+        event.stopPropagation();
+        setError(null);
+
+        createTable(table)
+           .then(() => {
+             history.push(`/dashboard?date=${today()}`);
+           })
+           .catch(setError);
+    }
+
+    return (
+        <form onSubmit={submitHandler}>
+            <TableErrors errors={error} />
+            <div className="form-group row">
+                <label className="col-sm-2 col-form-label">Table name:</label>
+                <div className="col-sm-10">
+                    <input name="table_name" minlength={2} required={true} value={table.table_name} onChange={changeHandler} />
+                </div>
             </div>
-            <div className="form-group col">
-              <label htmlFor="capacity">Capacity</label>
-              <input
-                type="number"
-                id="capacity"
-                name="capacity"
-                className="form-control"
-                aria-label="Table capacity"
-                required={true}
-                value={table.capacity}
-                min={1}
-                onChange={numberChangeHandler}
-              />
+            <div className="form-group row">
+                <label className="col-sm-2 col-form-label">Number of people:</label>
+                <div className="col-sm-10">
+                    <input name="capacity" type="number" min={1} required={true} value={table.capacity} onChange={changeHandlerNum} />
+                </div>
             </div>
-          </div>
-          <button
-            type="button"
-            className="btn btn-secondary mr-2 cancel"
-            onClick={onCancel}
-          >
-            <span className="oi oi-x" /> Cancel
-          </button>
-          <button type="submit" className="btn btn-primary">
-            <span className="oi oi-check" /> Submit
-          </button>
-        </fieldset>
-      </form>
-    </>
-  );
+            <button type="submit">Submit</button>
+            <button type="button" onClick={() => history.goBack()}>Cancel</button>
+        </form>
+    )
 }
 
 export default TableForm;

@@ -1,11 +1,14 @@
 import React from "react"
-import {useState} from "react"
-import { useHistory } from "react-router-dom";
-import { createReservation } from "../utils/api";
+import {useState, useEffect} from "react"
+import { useHistory, useParams } from "react-router-dom";
+import { readReservation, updateReservation } from "../utils/api";
 import ReservationErrors from "./ReservationError";
 
-function ReservationForm(){
+function ReservationEdit(){
     const history = useHistory();
+
+    const { reservation_id } = useParams();
+
     const initialState = {
         "first_name": "",
         "last_name": "",
@@ -14,7 +17,16 @@ function ReservationForm(){
         "reservation_time": "",
         "people": 0
     }
+    const [error, setError] = useState(null);
 
+    useEffect(() => {
+      setError(null);
+      readReservation(reservation_id)
+        .then(setReservation)
+        .catch(setError);
+    }, [reservation_id]);
+
+    // Similar to Form index.js from flashcards project:
     const [reservation, setReservation] = useState(initialState);
     function changeHandler({ target: { name, value } }) {
       setReservation((prevState) => ({
@@ -29,9 +41,6 @@ function ReservationForm(){
         [name]: Number(value),
       }));
     }
-
-    const [error, setError] = useState(null);
-
 
     function validate(reservation){
 
@@ -83,12 +92,14 @@ function ReservationForm(){
           return setError(reservationErrors);
         }
 
-        createReservation(reservation)
-        .then((createdReservation) => {
-            const res_date = createdReservation.reservation_date.match(/\d{4}-\d{2}-\d{2}/)[0];
+        updateReservation(
+          { reservation_id, ...reservation }
+        )
+        .then((updatedReservation) => {
+            const res_date = updatedReservation.reservation_date.match(/\d{4}-\d{2}-\d{2}/)[0];
         history.push(
           `/dashboard?date=`+res_date
-        ).catch(setError);
+        )
       })
     }
 
@@ -137,4 +148,4 @@ function ReservationForm(){
     )
 }
 
-export default ReservationForm;
+export default ReservationEdit;
