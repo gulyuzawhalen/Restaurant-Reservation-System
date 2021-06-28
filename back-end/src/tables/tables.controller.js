@@ -1,7 +1,6 @@
 const service = require("./tables.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-<<<<<<< HEAD
 function hasValidFields(req, res, next) {
   const { data = {} } = req.body;
   const validFields = new Set([
@@ -15,22 +14,6 @@ function hasValidFields(req, res, next) {
 
   if (invalidFields.length)
     return next({
-=======
-async function tableExists(req, res, next) {
-  const { table_id } = req.params;
-  const table = await service.read(Number(table_id));
-  if (table) {
-    res.locals.table = table;
-    next();
-  } else {
-    next({ status: 400, message: `Table id does not exist: ${table_id}` });
-  }
-}
-
-function tableIsAvailable(res, next) {
-  if (res.locals.table.reservation_id) {
-    next({
->>>>>>> 716eca1dfc08da3ecc34b0d9ee9ebb128e28cc43
       status: 400,
       message: `Invalid field(s): ${invalidFields.join(", ")}`,
     });
